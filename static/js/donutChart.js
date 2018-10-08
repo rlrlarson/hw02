@@ -1,3 +1,5 @@
+var activeLang;
+
 d3.json("/load_data", function (data) {
 
   data = data['users'];
@@ -49,9 +51,6 @@ d3.json("/load_data", function (data) {
   .domain(d3.values(prog_langs_data).map(function(d) { return d.key; }))
   .range(['#1b7688','#1b7676','#f9d057','#f29e2e','#9b0a0a', '#d7191c']);
 
-  console.log(color.domain());
-
-
 
   var arc = d3.arc()
   .innerRadius(radius - thickness)
@@ -89,12 +88,32 @@ d3.json("/load_data", function (data) {
           .text(`${d.data.value}`)
           .attr('text-anchor', 'middle')
           .attr('dy', '.6em');
+
+       /* barchart.selectAll("rect")
+        .data(data)
+        .each(function(d) {
+          if(d) {
+            if (d.prog_lang != activeLang) {
+              d3.select(this).transition().duration(400).style("opacity", ".4");
+            }
+          }
+        });*/
+
       })
     .on("mouseout", function(d) {
         d3.select(this)
           .style("cursor", "none")
           .style("fill", color(this._current))
           .select(".text-group").remove();
+
+        scatter.selectAll("circle")
+        .data(data)
+        .each(function(d) {
+          if(d) {
+              d3.select(this).transition().duration(400).style("opacity", "1");
+          }
+        });
+
       })
     .append('path')
     .attr('d', arc)
@@ -106,6 +125,20 @@ d3.json("/load_data", function (data) {
           .attr("d", arcMouseOver)
           .style("cursor", "pointer")
           .style("fill", "gray");
+
+        activeLang = d.data.key;
+        activeColor = color(this._current);
+        scatter.selectAll("circle")
+        .data(data)
+        .each(function(d) {
+          if(d) {
+            if (d.prog_lang != activeLang) {
+              d3.select(this).transition().duration(400).style("opacity", ".4");
+            }
+          }
+        });
+
+        barchart.update(activeLang, activeColor);
       })
     .on("mouseout", function(d) {
         d3.select(this)
@@ -114,6 +147,8 @@ d3.json("/load_data", function (data) {
           .attr("d", arc)
           .style("cursor", "none")
           .style("fill", color(this._current));
+
+        barchart.revert();
       })
     .each(function(d, i) { 
       this._current = i; 

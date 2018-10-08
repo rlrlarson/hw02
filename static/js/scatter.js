@@ -1,3 +1,5 @@
+var scatter; //renamed svg to scatter and made global so could be used in linking donut chart
+
 d3.json("/load_data", function (data) {
 
   data = data['users'];
@@ -13,12 +15,12 @@ d3.json("/load_data", function (data) {
     // console.log(typeof (data[0].age));
 
 
-  var svg = d3.select("#scatter");
+  scatter = d3.select("#scatter");
 
       margin = {top: 20, right: 10, bottom: 50, left: 20},
-      width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom,
-      g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      width = +scatter.attr("width") - margin.left - margin.right,
+      height = +scatter.attr("height") - margin.top - margin.bottom,
+      g = scatter.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   
   var radius = d3.scaleSqrt()
@@ -82,7 +84,7 @@ d3.json("/load_data", function (data) {
   .attr("cx", function(d) { return xScale(d.experience_yr); })
   .attr("cy", function(d) { return yScale(d.hw1_hrs); })
   .attr("r", function(d) { return radius(d.age); })
-  .style("fill", "#1b7688");
+  .style("fill", "steelblue");
 
   // ------ YOUR CODE END HERE -------- 
   
