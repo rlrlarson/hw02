@@ -3,12 +3,12 @@ from models import db, User
 from forms import UsersForm
 from flask_heroku import Heroku
 
+#to deploy on heroku
 app = Flask(__name__)
 heroku = Heroku(app)
 
-#removing to deploy to heroku
+#removing to use locally
 #app = Flask(__name__)
-
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://rebeccalarson:test_pw@localhost:5432/homework_users'
 
 db.init_app(app)

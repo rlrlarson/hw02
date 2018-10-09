@@ -162,5 +162,31 @@ function createVis(){
 
       }
 
+    barchart.updateBrushed = function(brushed_data) {
+
+      brushedMap = brushed_data.map(function(d,i) { 
+        return parseFloat(d.age);
+      });
+
+      brushedBins = d3.histogram()
+      .domain(x.domain())
+      .thresholds(x.ticks(11))
+      (brushedMap);
+
+      y.domain([0, d3.max(brushedBins, function(d) { return d.length; })]);
+
+      bar.data(brushedBins)
+      .attr("transform", function(d) { 
+        return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+
+
+      bar.select("rect").transition().duration(400)
+        .attr("height", function(d) { return height - y(d.length); });
+
+      bar.select("text")
+      .text(function(d) { return formatCount(d.length); });
+
+    }
+
 }
 

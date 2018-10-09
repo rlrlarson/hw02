@@ -1,4 +1,5 @@
 var scatter; //renamed svg to scatter and made global so could be used in linking donut chart
+var brushed_data;
 
 d3.json("/load_data", function (data) {
 
@@ -84,7 +85,8 @@ d3.json("/load_data", function (data) {
   .attr("cx", function(d) { return xScale(d.experience_yr); })
   .attr("cy", function(d) { return yScale(d.hw1_hrs); })
   .attr("r", function(d) { return radius(d.age); })
-  .style("fill", "steelblue");
+  .style("fill", "steelblue")
+  .attr("class", "non_brushed");
 
   // ------ YOUR CODE END HERE -------- 
   
@@ -104,6 +106,53 @@ d3.json("/load_data", function (data) {
     .attr('text-anchor', 'end')
     .attr('class', 'label')
     .text('Programming experience');
+
+  // Extra Credit #2
+  var brush = d3.brush()
+    .on("brush", highlightCircles);
+  //  .extent([[0, 0], [width, height]]);
+
+  scatter.append("g").call(brush);
+
+  function highlightCircles() {
+
+    if (d3.event.selection != null) {
+      bubble.style("fill", "steelblue")
+      .attr("class", "non_brushed");
+
+      var brush_coords = d3.brushSelection(this);
+
+      bubble.filter(function () {
+        var cx = d3.select(this).attr("cx"),
+            cy = d3.select(this).attr("cy");
+
+        return isBrushed(brush_coords, cx, cy);
+      })
+      .attr("class", "brushed")
+      .style("fill", "pink");
+
+      brushed_data = d3.selectAll(".brushed").data();
+
+      if (brushed_data.length > 0) {
+        barchart.updateBrushed(brushed_data);
+      }
+      else {
+        barchart.revert();
+      }
+    }
+  }
+
+  // from http://bl.ocks.org/feyderm/6bdbc74236c27a843db633981ad22c1b
+  // the brush coords and circle coords are off by a bit
+  function isBrushed(brush_coords, cx, cy) {
+
+     var x0 = brush_coords[0][0] - 40,
+         x1 = brush_coords[1][0] - 20,
+         y0 = brush_coords[0][1] - 22,
+         y1 = brush_coords[1][1] - 8;
+
+    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+  }
 
 });
 
