@@ -181,7 +181,8 @@ function createVis(){
 
 
       bar.select("rect").transition().duration(400)
-        .attr("height", function(d) { return height - y(d.length); });
+        .attr("height", function(d) { return height - y(d.length); })
+        .attr("fill", "pink");
 
       bar.select("text")
       .text(function(d) { return formatCount(d.length); });
